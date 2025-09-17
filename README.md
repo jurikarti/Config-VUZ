@@ -7,8 +7,11 @@
 
 ## Структура проекта
 project/
-├── core_emulator.py # Класс Emulator с логикой команд
+
+├── core_emulator.py # Класс Emulator с логикой команд 
+
 ├── emulator.py # Основной скрипт для запуска REPL
+
 └── README.md
 
 
