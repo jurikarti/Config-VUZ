@@ -1,12 +1,12 @@
 import os
 import shlex
-import sys
 
 class Emulator:
-    def __init__(self):
+    def __init__(self, vfs_path=None):
         self.cwd = "/"                          # Виртуальная текущая директория
         self.history = []                       # Буфер истории
         self.vfs_name = "VFS"
+        self.vfs_path = vfs_path if vfs_path else "."
 
     def expand_vars(self, text: str) -> str:    # Парсер путей у ОС
         try:
@@ -29,7 +29,7 @@ class Emulator:
     def run_command(self, cmd, args):
         if cmd == 'exit':
             print('exit')
-            raise SystemExit(0) 
+            raise SystemExit(0)
         elif cmd == 'ls':
             print(f"ls вызван с аргументами: {args}")
         elif cmd == 'cd':
@@ -56,8 +56,8 @@ class Emulator:
         print("  ls [args]      - выводит имя и аргументы")
         print("  cd [dir]       - выводит имя и аргументы и меняет виртуальный cwd")
         print("  history        - вывести историю команд")
-        print("  exit            - выйти из эмулятора")
-        print("  help            - справка")
+        print("  exit           - выйти из эмулятора")
+        print("  help           - справка")
 
     def prompt(self):
         return f"{self.vfs_name}:{self.cwd}$ "
@@ -82,3 +82,20 @@ class Emulator:
                 self.repl_once(line)
         except SystemExit:
             pass
+
+    def run_script(self, script_path):
+        print(f"=== Выполнение скрипта {script_path} ===")
+        try:
+            with open(script_path, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line or line.startswith("#"):
+                        continue
+                    # имитация ввода пользователя
+                    print(self.prompt() + line)
+                    self.repl_once(line)
+        except FileNotFoundError:
+            print(f"Ошибка: файл {script_path} не найден")
+        except Exception as e:
+            print(f"Ошибка выполнения скрипта: {e}")
+        print("=== Конец выполнения скрипта ===")
